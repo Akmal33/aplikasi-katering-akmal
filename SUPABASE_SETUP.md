@@ -57,7 +57,13 @@ INSERT INTO finance_summary (id, total_income, total_expense, current_balance)
 VALUES (1, 0, 0, 0);
 ```
 
-## 4. Run the Application
+## 4. Configure Row Level Security (RLS)
+
+This application uses Row Level Security (RLS) to control access to the database tables. The SQL schema includes policies that allow all operations when using the service role key.
+
+If you're using the service role key (recommended for server-side operations), these policies will allow all operations. However, if you're using the anonymous key, you might need to adjust the policies in the `supabase_schema.sql` file.
+
+## 5. Run the Application
 
 After setting up the database, you can run the application:
 

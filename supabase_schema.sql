@@ -27,3 +27,10 @@ ON CONFLICT (id) DO NOTHING;
 -- Enable RLS (Row Level Security) - optional but recommended
 ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.finance_summary ENABLE ROW LEVEL SECURITY;
+
+-- Create policies to allow all operations (since we're using service role key)
+CREATE POLICY "Allow all operations for service role" ON "public"."transactions"
+FOR ALL USING (true) WITH CHECK (true);
+
+CREATE POLICY "Allow all operations for service role" ON "public"."finance_summary"
+FOR ALL USING (true) WITH CHECK (true);

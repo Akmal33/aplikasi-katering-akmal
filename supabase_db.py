@@ -39,6 +39,7 @@ def init_database():
             print("Note: Please create the required tables in your Supabase database.")
             print("Refer to SUPABASE_SETUP.md for instructions on setting up the database tables.")
             print("You can also use the SQL commands in supabase_schema.sql file.")
+            print(f"Error details: {e}")
         
         print("Supabase database initialized successfully!")
         print("Make sure you have created the required tables as per SUPABASE_SETUP.md")
@@ -68,7 +69,7 @@ def add_income(date: str, day: str, description: str, amount: float) -> float:
             "balance": new_balance
         }
         
-        supabase.table("transactions").insert(transaction_data).execute()
+        insert_result = supabase.table("transactions").insert(transaction_data).execute()
         
         # Update finance summary
         supabase.table("finance_summary").update({
@@ -103,7 +104,7 @@ def add_expense(date: str, day: str, description: str, amount: float) -> float:
             "balance": new_balance
         }
         
-        supabase.table("transactions").insert(transaction_data).execute()
+        insert_result = supabase.table("transactions").insert(transaction_data).execute()
         
         # Update finance summary
         supabase.table("finance_summary").update({
