@@ -2,6 +2,10 @@
 
 This guide explains how to set up Supabase as the database backend for the Catering Finance Tracker application.
 
+## ⚠️ SECURITY WARNING
+
+**Never share your Supabase API keys publicly.** The keys you provided should be regenerated immediately for security reasons. This document will show you how to properly configure credentials without exposing them.
+
 ## Prerequisites
 
 1. A Supabase account (free tier available at [supabase.com](https://supabase.com))
@@ -25,7 +29,7 @@ This guide explains how to set up Supabase as the database backend for the Cater
 2. Click "API" in the sidebar
 3. Copy the following values:
    - Project URL (SUPABASE_URL)
-   - anon public key or service role key (SUPABASE_KEY)
+   - **Service role key** (SUPABASE_KEY) - Use this for server-side operations, not the anon key
 
 ### 3. Create Database Tables
 
@@ -57,17 +61,27 @@ In the Supabase dashboard:
 
 ## Environment Configuration
 
-Set the following environment variables in your deployment platform:
+The application uses environment variables for configuration. There are two ways to set these:
 
-```
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_KEY=your_supabase_api_key
-```
+### Method 1: Using .env file (Recommended for local development)
 
-For local development, you can create a `.env` file:
-```
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_KEY=your-service-role-or-anon-key
+1. Copy the `.env.example` file to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit the `.env` file and replace the placeholder values with your actual Supabase credentials:
+   ```
+   SUPABASE_URL=https://your-project.supabase.co
+   SUPABASE_KEY=your-service-role-key
+   ```
+
+### Method 2: System Environment Variables
+
+Set the environment variables directly in your system:
+```bash
+export SUPABASE_URL=your_supabase_project_url
+export SUPABASE_KEY=your_supabase_service_role_key
 ```
 
 ## Local Development
@@ -77,11 +91,7 @@ SUPABASE_KEY=your-service-role-or-anon-key
    pip install -r requirements.txt
    ```
 
-2. Set environment variables:
-   ```bash
-   export SUPABASE_URL=your_supabase_project_url
-   export SUPABASE_KEY=your_supabase_api_key
-   ```
+2. Set up your `.env` file as described above
 
 3. Run the application:
    ```bash
@@ -121,7 +131,7 @@ SUPABASE_KEY=your-service-role-or-anon-key
 ### Common Issues
 
 1. **Connection Errors**: Verify that your SUPABASE_URL and SUPABASE_KEY are correct
-2. **Permission Errors**: Ensure your API key has the necessary permissions
+2. **Permission Errors**: Ensure your API key has the necessary permissions (use service role key)
 3. **Table Not Found**: Make sure you've created the required tables in your Supabase project
 
 ### Debugging
