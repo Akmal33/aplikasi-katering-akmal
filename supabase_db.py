@@ -15,11 +15,17 @@ load_dotenv()
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
 
+# Validate Supabase configuration
+if not SUPABASE_URL or not SUPABASE_KEY or SUPABASE_URL == "your_supabase_project_url_here":
+    print("Warning: Supabase credentials not properly configured in .env file")
+    print("Please update your .env file with valid Supabase URL and key")
+    print("Using placeholder client that will fail on operations")
+
 # Initialize Supabase client
 def get_supabase_client() -> Client:
     """Initialize and return Supabase client"""
-    if not SUPABASE_URL or not SUPABASE_KEY:
-        raise ValueError("SUPABASE_URL and SUPABASE_KEY environment variables must be set")
+    if not SUPABASE_URL or not SUPABASE_KEY or SUPABASE_URL == "your_supabase_project_url_here":
+        raise ValueError("SUPABASE_URL and SUPABASE_KEY environment variables must be set with valid values")
     
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 

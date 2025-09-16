@@ -12,7 +12,24 @@ app = Flask(__name__, static_url_path='/static')
 # Only initialize if we're not in a serverless environment
 import os
 if 'AWS_LAMBDA_FUNCTION_NAME' not in os.environ and 'NETLIFY' not in os.environ and 'VERCEL' not in os.environ:
-    init_database()
+    try:
+        init_database()
+    except Exception as e:
+        print(f"Warning: Database initialization failed: {e}")
+        print("The application will continue to run but database features will not work.")
+        print("Please check your Supabase credentials in the .env file.")
+
+@app.context_processor
+def override_url_for():
+    return dict(url_for=dated_url_for)
+
+def dated_url_for(endpoint, **values):
+    if endpoint == 'static':
+        filename = values.get('filename', None)
+        if filename:
+            file_path = os.path.join(app.root_path, endpoint, filename)
+            values['q'] = int(os.stat(file_path).st_mtime)
+    return url_for(endpoint, **values)
 
 @app.context_processor
 def override_url_for():
