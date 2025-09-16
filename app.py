@@ -1,12 +1,24 @@
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file, url_for
 import os
 from datetime import datetime
 from database import init_database, add_income, add_expense, get_all_transactions, get_finance_summary, get_day_name, export_to_excel
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 # Inisialisasi database
 init_database()
+
+@app.context_processor
+def override_url_for():
+    return dict(url_for=dated_url_for)
+
+def dated_url_for(endpoint, **values):
+    if endpoint == 'static':
+        filename = values.get('filename', None)
+        if filename:
+            file_path = os.path.join(app.root_path, endpoint, filename)
+            values['q'] = int(os.stat(file_path).st_mtime)
+    return url_for(endpoint, **values)
 
 @app.route('/')
 def index():
@@ -93,5 +105,8 @@ def manifest():
 def service_worker():
     return app.send_static_file('service-worker.js')
 
-if __name__ == '__main__':
+# Untuk Netlify Functions
+if __name__ != '__main__':
+    application = app
+else:
     app.run(debug=True, host='0.0.0.0', port=5000)

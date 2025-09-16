@@ -1,0 +1,12 @@
+{
+  "name": "catering-finance-api",
+  "version": "1.0.0",
+  "description": "Netlify Function for Catering Finance App",
+  "main": "app.py",
+  "scripts": {
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "serverless-wsgi": "^3.0.0"
+  }
+}
