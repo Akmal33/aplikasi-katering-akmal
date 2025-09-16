@@ -16,20 +16,38 @@ def handler(event, context):
         
         # Import modules after setting environment variable
         from app import application
-        from database import init_database
+        from supabase_db import init_database
         
         # Initialize database
         init_database()
         
-        # For Vercel functions, we need to return a response object
-        # Let's create a simple response for testing
-        return {
-            'statusCode': 200,
-            'headers': {
-                'Content-Type': 'text/plain'
-            },
-            'body': 'Function is working!'
-        }
+        # Extract the request details from the event
+        path = event.get('path', '/')
+        http_method = event.get('httpMethod', 'GET')
+        headers = event.get('headers', {})
+        query_string_parameters = event.get('queryStringParameters', {})
+        body = event.get('body', '')
+        
+        # Handle base64 encoded body for binary data
+        is_base64_encoded = event.get('isBase64Encoded', False)
+        
+        # Create a test client with the Flask app
+        with application.test_client() as client:
+            # Make the request to our Flask app
+            response = client.open(
+                path=path,
+                method=http_method,
+                headers=headers,
+                data=body,
+                query_string=query_string_parameters
+            )
+            
+            # Prepare the response for Vercel
+            return {
+                'statusCode': response.status_code,
+                'headers': dict(response.headers),
+                'body': response.get_data(as_text=True)
+            }
     except Exception as e:
         import traceback
         error_message = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"

@@ -15,7 +15,8 @@ def handler(event, context):
         os.environ['NETLIFY'] = 'true'
         
         # Import modules after setting environment variable
-        from database import init_database, export_to_excel
+        from supabase_db import init_database
+        from database import export_to_excel  # Keep using SQLite for export
         
         # Initialize database
         init_database()
@@ -57,7 +58,8 @@ def handler(event, context):
             }
     except Exception as e:
         import traceback
-        error_message = f"Error: {str(e)}\nTraceback: {traceback.format_exc()}"
+        error_message = f"Error: {str(e)}
+Traceback: {traceback.format_exc()}"
         print(error_message)
         return {
             'statusCode': 500,

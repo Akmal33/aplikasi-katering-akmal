@@ -1,7 +1,10 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from datetime import datetime
-from database import init_database, add_income, add_expense, get_all_transactions, get_finance_summary, get_day_name, export_to_excel
+# Use Supabase database instead of SQLite
+from supabase_db import init_database, add_income, add_expense, get_all_transactions, get_finance_summary, get_day_name
+# Keep SQLite for export functionality
+from database import export_to_excel
 
 class CateringFinanceApp:
     def __init__(self, root):

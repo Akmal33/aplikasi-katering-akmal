@@ -15,7 +15,7 @@ def handler(event, context):
         os.environ['NETLIFY'] = 'true'
         
         # Import modules after setting environment variable
-        from database import init_database, get_all_transactions, get_finance_summary
+        from supabase_db import init_database, get_all_transactions, get_finance_summary
         
         # Initialize database
         init_database()
