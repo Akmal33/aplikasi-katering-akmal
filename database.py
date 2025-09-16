@@ -345,5 +345,5 @@ def recalculate_balances():
 
 # Inisialisasi database saat modul diimpor
 # Only initialize if we're not in a serverless environment
-if __name__ != '__main__' and 'AWS_LAMBDA_FUNCTION_NAME' not in os.environ:
+if __name__ != '__main__' and 'AWS_LAMBDA_FUNCTION_NAME' not in os.environ and 'NETLIFY' not in os.environ and 'VERCEL' not in os.environ:
     init_database()

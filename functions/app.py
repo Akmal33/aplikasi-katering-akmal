@@ -1,14 +1,21 @@
 import json
 import os
+import sys
+
+# Add the current directory to the Python path to ensure imports work
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
 
 # Set environment variable to indicate we're in a serverless environment
 os.environ['NETLIFY'] = 'true'
 
-# Import the Flask app after setting the environment variable
-from app import application
-
 def handler(event, context):
     try:
+        # Import the Flask app after setting the environment variable
+        from app import application
+        
         # Initialize the database for each request in serverless environment
         from database import init_database
         init_database()
@@ -42,9 +49,14 @@ def handler(event, context):
             }
     except Exception as e:
         # Handle any errors
+        import traceback
+        error_message = f"Error: {str(e)}\
+Traceback: {traceback.format_exc()}"
+        print(error_message)  # This will help with debugging
         return {
             'statusCode': 500,
             'body': json.dumps({
-                'error': str(e)
+                'error': str(e),
+                'details': error_message
             })
         }
