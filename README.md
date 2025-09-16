@@ -10,10 +10,11 @@ A comprehensive system for tracking catering business finances with multiple pla
 
 - Track daily income and expenses
 - Automatic balance calculation
-- Local database storage (SQLite)
+- Database storage (SQLite for local development, Supabase for deployment)
 - Excel export functionality
 - Multi-platform support (Web, Mobile, Desktop)
 - Real-time financial reporting
+- Persistent data storage with Supabase integration
 
 ## System Architecture
 
@@ -36,9 +37,9 @@ A comprehensive system for tracking catering business finances with multiple pla
 
 ## Database Schema
 
-The application uses SQLite as its local database with the following schema:
+The application can use either SQLite (for local development) or Supabase (for deployment) as its database:
 
-### Transactions Table
+### SQLite (Local Development)
 ```sql
 CREATE TABLE transactions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,10 +51,7 @@ CREATE TABLE transactions (
     balance REAL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
-```
 
-### Finance Summary Table
-```sql
 CREATE TABLE finance_summary (
     id INTEGER PRIMARY KEY,
     total_income REAL DEFAULT 0,
@@ -62,6 +60,14 @@ CREATE TABLE finance_summary (
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 ```
+
+### Supabase (Deployment)
+The same schema structure is used in Supabase (PostgreSQL), with the following adjustments:
+- `id` columns use `int8` instead of `INTEGER`
+- `created_at` and `last_updated` use `timestamptz` instead of `TIMESTAMP`
+- All numeric fields use `float8` instead of `REAL`
+
+For detailed instructions on setting up Supabase, see SUPABASE_INTEGRATION.md
 
 ## Installation
 
@@ -96,9 +102,15 @@ python desktop_app.py
 3. Click "New site from Git"
 4. Select your forked repository
 5. Set the build settings:
-   - Build command: `pip install -r requirements.txt`
+   - Build command: `pip install -r requirements.txt && pip install -r functions/requirements.txt`
    - Publish directory: `static`
-6. Click "Deploy site"
+
+6. Set environment variables:
+   - Go to your site settings
+   - Navigate to "Build & deploy" > "Environment"
+   - Add `SUPABASE_URL` and `SUPABASE_KEY` as environment variables
+
+7. Click "Deploy site"
 
 ### Deploy to Vercel
 1. Fork this repository to your GitHub account
@@ -109,15 +121,23 @@ python desktop_app.py
    - Framework Preset: Other
    - Build Command: `pip install -r requirements.txt`
    - Output Directory: `static`
-6. Click "Deploy"
+
+6. Set environment variables:
+   - Go to your project settings
+   - Navigate to "Environment Variables"
+   - Add `SUPABASE_URL` and `SUPABASE_KEY` as environment variables
+
+7. Click "Deploy"
+
+For detailed instructions on setting up Supabase, see SUPABASE_INTEGRATION.md
 
 ## Technology Stack
 
-- **Backend**: Python, Flask, SQLite
+- **Backend**: Python, Flask
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Mobile**: Kivy, Buildozer
 - **Desktop**: Tkinter
-- **Data Storage**: SQLite (primary), Excel (export)
+- **Data Storage**: SQLite (local development), Supabase (deployment), Excel (export)
 
 ## Features Details
 
