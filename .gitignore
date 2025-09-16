@@ -155,3 +155,15 @@ Thumbs.db
 
 # Log files
 *.log
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Python cache files
+*.pyc
+__pycache__/
+
+# Check script
+check_db.py
