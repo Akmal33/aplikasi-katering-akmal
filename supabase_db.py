@@ -95,7 +95,7 @@ def get_all_transactions() -> List[Dict]:
     """Get all transactions from Supabase database"""
     supabase = get_supabase_client()
     
-    result = supabase.table("transactions").select("*").order("date", "created_at").execute()
+    result = supabase.table("transactions").select("*").order("date", desc=False).execute()
     
     transactions = []
     for transaction in result.data:
