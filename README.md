@@ -11,7 +11,7 @@ A comprehensive system for tracking catering business finances with multiple pla
 - Track daily income and expenses
 - Automatic balance calculation
 - Local database storage (SQLite)
-- Excel export functionality (optional)
+- Excel export functionality
 - Multi-platform support (Web, Mobile, Desktop)
 - Real-time financial reporting
 
@@ -32,7 +32,7 @@ A comprehensive system for tracking catering business finances with multiple pla
 ### 3. Desktop Applications
 - GUI version with Tkinter
 - Local SQLite database for data storage
-- Excel integration for data export
+- Excel export functionality
 
 ## Database Schema
 
@@ -95,6 +95,24 @@ python desktop_app.py
 - **Mobile**: Kivy, Buildozer
 - **Desktop**: Tkinter
 - **Data Storage**: SQLite (primary), Excel (export)
+
+## Features Details
+
+### Data Management
+- Add income and expense transactions
+- Automatic balance calculation
+- Real-time financial summary
+- Transaction history tracking
+
+### Export Functionality
+- Export data to Excel format
+- Automatic filename generation with timestamp
+- Professional Excel formatting
+
+### Platform Support
+- **Web**: Accessible from any browser, PWA installable
+- **Mobile**: Native Android app experience
+- **Desktop**: Full-featured desktop application
 
 ## License
 
