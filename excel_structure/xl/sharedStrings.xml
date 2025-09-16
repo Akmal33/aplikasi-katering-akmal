@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="14" uniqueCount="14">
+  <si><t>Tanggal</t></si>
+  <si><t>Keterangan</t></si>
+  <si><t>Masuk</t></si>
+  <si><t>Keluar</t></si>
+  <si><t>Sisa</t></si>
+  <si><t>No.</t></si>
+  <si><t>Nama Barang:</t></si>
+  <si><t>01/09/2025</t></si>
+  <si><t>05/09/2025</t></si>
+  <si><t>10/09/2025</t></si>
+  <si><t>Pembelian awal</t></si>
+  <si><t>Barang terjual</t></si>
+  <si><t>Pembelian tambahan</t></si>
+  <si><t>Barang terjual</t></si>
+</sst>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Keuangan Katering</title>
+    <meta name="description" content="Aplikasi untuk mengelola keuangan katering dengan fitur input manual dan perhitungan otomatis">
+    <meta name="theme-color" content="#28a745">
+    
+    <!-- Manifest untuk PWA -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/static/icons/icon-192x192.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>Aplikasi Keuangan Katering</h1>
+            <p>Kelola pemasukan dan pengeluaran usaha katering Anda</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Spinner Loading -->
+        <div class="spinner"></div>
+        
+        <!-- Form Pemasukan -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Tambah Pemasukan</h2>
+            </div>
+            <div class="card-body">
+                <form id="incomeForm">
+                    <div class="form-group">
+                        <label for="incomeDate" class="form-label">Tanggal</label>
+                        <input type="date" class="form-control" id="incomeDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="incomeDescription" class="form-label">Deskripsi</label>
+                        <input type="text" class="form-control" id="incomeDescription" placeholder="Contoh: Pembayaran catering" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="incomeAmount" class="form-label">Jumlah (Rp)</label>
+                        <input type="number" class="form-control" id="incomeAmount" placeholder="Contoh: 2500000" min="0" step="1000" required>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block">Tambah Pemasukan</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Form Pengeluaran -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Tambah Pengeluaran</h2>
+            </div>
+            <div class="card-body">
+                <form id="expenseForm">
+                    <div class="form-group">
+                        <label for="expenseDate" class="form-label">Tanggal</label>
+                        <input type="date" class="form-control" id="expenseDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseDescription" class="form-label">Deskripsi</label>
+                        <input type="text" class="form-control" id="expenseDescription" placeholder="Contoh: Belanja bahan baku" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseAmount" class="form-label">Jumlah (Rp)</label>
+                        <input type="number" class="form-control" id="expenseAmount" placeholder="Contoh: 500000" min="0" step="1000" required>
+                    </div>
+                    <button type="submit" class="btn btn-danger btn-block">Tambah Pengeluaran</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Ringkasan Keuangan -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>Total Pemasukan</h3>
+                <div class="amount positive">Rp {{ "{:,.0f}".format(total_income) }}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Pengeluaran</h3>
+                <div class="amount negative">Rp {{ "{:,.0f}".format(total_expense) }}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Sisa Uang</h3>
+                <div class="amount balance">Rp {{ "{:,.0f}".format(current_balance) }}</div>
+            </div>
+        </div>
+
+        <!-- Laporan Transaksi -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Laporan Transaksi</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>Hari</th>
+                            <th>Deskripsi</th>
+                            <th>Pemasukan</th>
+                            <th>Pengeluaran</th>
+                            <th>Saldo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.date }}</td>
+                            <td>{{ transaction.day }}</td>
+                            <td>{{ transaction.description }}</td>
+                            <td class="positive">Rp {{ "{:,.0f}".format(transaction.income) }}</td>
+                            <td class="negative">Rp {{ "{:,.0f}".format(transaction.expense) }}</td>
+                            <td class="balance">Rp {{ "{:,.0f}".format(transaction.balance) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal untuk pesan -->
+    <div class="modal" id="messageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Pesan</h3>
+                <button class="close">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary close">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prompt Install PWA -->
+    <div class="pwa-install-prompt" id="pwaInstallPrompt">
+        <p>Install aplikasi ini untuk pengalaman yang lebih baik!</p>
+        <div class="pwa-install-buttons">
+            <button class="btn btn-success" onclick="installPWA()">Install</button>
+            <button class="btn btn-secondary" onclick="closeInstallPrompt()">Nanti</button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
