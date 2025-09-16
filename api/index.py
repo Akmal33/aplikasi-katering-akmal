@@ -1,18 +1,18 @@
-import json
 import os
+import json
 
 # Set environment variable to indicate we're in a serverless environment
-os.environ['NETLIFY'] = 'true'
+os.environ['VERCEL'] = 'true'
 
 # Import the Flask app after setting the environment variable
 from app import application
 
+# Initialize the database
+from database import init_database
+init_database()
+
 def handler(event, context):
     try:
-        # Initialize the database for each request in serverless environment
-        from database import init_database
-        init_database()
-        
         # Extract the request details from the event
         path = event.get('path', '/')
         http_method = event.get('httpMethod', 'GET')
@@ -34,7 +34,7 @@ def handler(event, context):
                 query_string=query_string_parameters
             )
             
-            # Prepare the response for Netlify
+            # Prepare the response for Vercel
             return {
                 'statusCode': response.status_code,
                 'headers': dict(response.headers),

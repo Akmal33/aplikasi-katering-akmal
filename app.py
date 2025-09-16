@@ -6,7 +6,10 @@ from database import init_database, add_income, add_expense, get_all_transaction
 app = Flask(__name__, static_url_path='/static')
 
 # Inisialisasi database
-init_database()
+# Only initialize if we're not in a serverless environment
+import os
+if 'AWS_LAMBDA_FUNCTION_NAME' not in os.environ and 'NETLIFY' not in os.environ and 'VERCEL' not in os.environ:
+    init_database()
 
 @app.context_processor
 def override_url_for():

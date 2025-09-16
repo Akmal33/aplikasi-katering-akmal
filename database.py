@@ -344,4 +344,6 @@ def recalculate_balances():
     conn.close()
 
 # Inisialisasi database saat modul diimpor
-init_database()
+# Only initialize if we're not in a serverless environment
+if __name__ != '__main__' and 'AWS_LAMBDA_FUNCTION_NAME' not in os.environ:
+    init_database()
