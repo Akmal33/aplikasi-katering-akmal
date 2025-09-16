@@ -88,6 +88,29 @@ buildozer android debug
 python desktop_app.py
 ```
 
+## Deployment
+
+### Deploy to Netlify
+1. Fork this repository to your GitHub account
+2. Sign up/login to [Netlify](https://netlify.com)
+3. Click "New site from Git"
+4. Select your forked repository
+5. Set the build settings:
+   - Build command: `pip install -r requirements.txt`
+   - Publish directory: `static`
+6. Click "Deploy site"
+
+### Deploy to Vercel
+1. Fork this repository to your GitHub account
+2. Sign up/login to [Vercel](https://vercel.com)
+3. Click "New Project"
+4. Import your forked repository
+5. Set the build settings:
+   - Framework Preset: Other
+   - Build Command: `pip install -r requirements.txt`
+   - Output Directory: `static`
+6. Click "Deploy"
+
 ## Technology Stack
 
 - **Backend**: Python, Flask, SQLite
