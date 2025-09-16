@@ -13,8 +13,8 @@ This application uses Supabase as its database. Follow these steps to set up you
 Create a `.env` file in the root directory with your Supabase credentials:
 
 ```
-SUPABASE_URL=your_supabase_project_url_here
-SUPABASE_KEY=your_supabase_service_role_key_here
+SUPABASE_URL=your_supabase_project_url_herehttps://zuanrdxhdpwxpdjcurad.supabase.co
+SUPABASE_KEY=yeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YW5yZHhoZHB3eHBkamN1cmFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5OTkzOTUsImV4cCI6MjA3MzU3NTM5NX0.iW3CBNkFRsH52QEYIA0f5B3fdtgc1l9MqiEyl4qkQ7o
 ```
 
 ## 3. Create Database Tables

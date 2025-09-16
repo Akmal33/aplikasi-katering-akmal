@@ -18,7 +18,7 @@ def validate_supabase_config():
     
     # Check if .env file exists
     if not os.path.exists(".env"):
-        print("❌ .env file not found!")
+        print("X .env file not found!")
         print("\nTo fix this issue:")
         print("1. Copy .env.example to .env:")
         print("   cp .env.example .env")
@@ -27,7 +27,7 @@ def validate_supabase_config():
     
     # Check if credentials are set
     if not SUPABASE_URL or not SUPABASE_KEY:
-        print("❌ Supabase credentials not found in .env file!")
+        print("X Supabase credentials not found in .env file!")
         print("\nTo fix this issue:")
         print("1. Edit your .env file and add your Supabase credentials")
         print("2. The file should contain:")
@@ -37,7 +37,7 @@ def validate_supabase_config():
     
     # Check if credentials are placeholder values
     if SUPABASE_URL == "your_supabase_project_url_here" or SUPABASE_KEY == "your_supabase_service_role_key_here":
-        print("❌ Supabase credentials are still placeholder values!")
+        print("X Supabase credentials are still placeholder values!")
         print("\nTo fix this issue:")
         print("1. Get your Supabase credentials from your Supabase dashboard:")
         print("   - Go to https://app.supabase.com/")
@@ -49,11 +49,11 @@ def validate_supabase_config():
     
     # Check if URL looks valid
     if not SUPABASE_URL.startswith("https://"):
-        print("❌ Supabase URL doesn't look valid!")
+        print("X Supabase URL doesn't look valid!")
         print("   URL should start with 'https://'")
         return False
     
-    print("✅ Supabase configuration appears to be valid!")
+    print("[OK] Supabase configuration appears to be valid!")
     print(f"   URL: {SUPABASE_URL[:30]}...")
     print("   Key: ********** (hidden for security)")
     return True
@@ -89,5 +89,5 @@ if __name__ == "__main__":
     if not validate_supabase_config():
         show_supabase_setup_instructions()
     else:
-        print("\n🎉 Your Supabase configuration is ready!")
+        print("\n[OK] Your Supabase configuration is ready!")
         print("You can now run your application with: python app.py")
