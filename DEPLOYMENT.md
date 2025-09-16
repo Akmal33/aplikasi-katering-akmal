@@ -1,74 +1,40 @@
 # Deployment Instructions
 
-## Prerequisites
-
-Before deploying, you need to set up a Supabase project and configure the environment variables:
-
-1. Create a Supabase account at [supabase.com](https://supabase.com)
-2. Create a new project
-3. Set up the required database tables (see SUPABASE_INTEGRATION.md)
-4. Get your project URL and API key
-
-## Environment Variables
-
-You must set the following environment variables in your deployment platform:
-
-```
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_KEY=your_supabase_api_key
-```
-
 ## Vercel Deployment
 
-1. Install the Vercel CLI:
-   ```bash
-   npm install -g vercel
-   ```
+To deploy this application on Vercel, you need to set up environment variables for Supabase integration.
 
-2. Set environment variables:
-   ```bash
-   vercel env add SUPABASE_URL
-   vercel env add SUPABASE_KEY
-   ```
+### Environment Variables
 
-3. Deploy the application:
-   ```bash
-   vercel
-   ```
+You need to set the following environment variables in your Vercel project settings:
 
-The `vercel.json` file in the root directory configures the deployment for Vercel.
+1. `SUPABASE_URL` - Your Supabase project URL
+2. `SUPABASE_KEY` - Your Supabase service role key
 
-## Netlify Deployment
+### Setting Up Environment Variables on Vercel
 
-1. Install the Netlify CLI:
-   ```bash
-   npm install -g netlify-cli
-   ```
+1. Go to your Vercel dashboard
+2. Select your project
+3. Go to Settings > Environment Variables
+4. Add the following variables:
+   - Name: `SUPABASE_URL`, Value: Your Supabase project URL
+   - Name: `SUPABASE_KEY`, Value: Your Supabase service role key
 
-2. Set environment variables in the Netlify dashboard:
-   - Go to your site settings
-   - Navigate to "Build & deploy" > "Environment"
-   - Add `SUPABASE_URL` and `SUPABASE_KEY` as environment variables
+### Supabase Setup
 
-3. Deploy the application:
-   ```bash
-   netlify deploy
-   ```
+Make sure you have set up your Supabase database tables by running the SQL commands in `supabase_schema.sql`.
 
-The `netlify.toml` file configures the deployment for Netlify. The application uses Netlify Functions to run the Python Flask backend.
+## Local Development
 
-## Benefits of Using Supabase
+For local development, create a `.env` file in the root directory with your Supabase credentials:
 
-- **Persistent Data**: Unlike SQLite which is ephemeral on serverless platforms, Supabase provides persistent data storage
-- **Real-time Updates**: Supabase supports real-time data updates
-- **Scalability**: Supabase can scale with your application's needs
-- **Authentication**: Built-in user authentication (optional)
-- **Dashboard**: Web-based dashboard for database management
+```
+SUPABASE_URL=your_supabase_project_url_here
+SUPABASE_KEY=your_supabase_service_role_key_here
+```
 
-## Notes
+Then run the application:
 
-- Both platforms will automatically detect and use the appropriate configuration files.
-- The application should work on both platforms with the provided configurations.
-- Static assets are served from the `static` directory.
-- With Supabase integration, your data will now be persistently stored and accessible across deployments.
-- For detailed Supabase setup instructions, see SUPABASE_INTEGRATION.md
+```bash
+python app.py
+```

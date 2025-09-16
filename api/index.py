@@ -18,8 +18,13 @@ def handler(event, context):
         from app import application
         from supabase_db import init_database
         
-        # Initialize database
-        init_database()
+        # Initialize database with error handling
+        try:
+            init_database()
+        except Exception as db_error:
+            print(f"Warning: Database initialization failed: {db_error}")
+            # Continue running the application even if database initialization fails
+            # This allows the frontend to work without backend functionality
         
         # Extract the request details from the event
         path = event.get('path', '/')
