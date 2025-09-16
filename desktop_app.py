@@ -1,7 +1,7 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 from datetime import datetime
-from database import init_database, add_income, add_expense, get_all_transactions, get_finance_summary, get_day_name
+from database import init_database, add_income, add_expense, get_all_transactions, get_finance_summary, get_day_name, export_to_excel
 
 class CateringFinanceApp:
     def __init__(self, root):
@@ -72,9 +72,15 @@ class CateringFinanceApp:
         self.balance_label = ttk.Label(summary_frame, text="Sisa Uang: Rp 0", font=("Arial", 12, "bold"), foreground="blue")
         self.balance_label.grid(row=0, column=2)
         
+        # Frame untuk tombol ekspor
+        export_frame = ttk.Frame(main_frame)
+        export_frame.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 10))
+        
+        ttk.Button(export_frame, text="Ekspor ke Excel", command=self.export_to_excel).grid(row=0, column=0, sticky=tk.W)
+        
         # Frame untuk tabel transaksi
         transactions_frame = ttk.LabelFrame(main_frame, text="Daftar Transaksi", padding="10")
-        transactions_frame.grid(row=3, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10))
+        transactions_frame.grid(row=4, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 10))
         
         # Scrollbar
         scrollbar_y = ttk.Scrollbar(transactions_frame, orient=tk.VERTICAL)
@@ -114,13 +120,16 @@ class CateringFinanceApp:
         self.transactions_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
         # Tombol refresh
-        ttk.Button(main_frame, text="Refresh Data", command=self.refresh_data).grid(row=4, column=0, sticky=tk.W, pady=(10, 0))
+        button_frame = ttk.Frame(main_frame)
+        button_frame.grid(row=5, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(10, 0))
+        
+        ttk.Button(button_frame, text="Refresh Data", command=self.refresh_data).grid(row=0, column=0, sticky=tk.W)
         
         # Konfigurasi grid weights
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
         main_frame.columnconfigure(0, weight=1)
-        main_frame.rowconfigure(3, weight=1)
+        main_frame.rowconfigure(4, weight=1)
         transactions_frame.columnconfigure(0, weight=1)
         transactions_frame.rowconfigure(0, weight=1)
     
@@ -177,6 +186,16 @@ class CateringFinanceApp:
             messagebox.showerror("Error", "Jumlah harus berupa angka!")
         except Exception as e:
             messagebox.showerror("Error", f"Terjadi kesalahan: {str(e)}")
+    
+    def export_to_excel(self):
+        try:
+            filename = export_to_excel()
+            if filename:
+                messagebox.showinfo("Sukses", f"Data berhasil diekspor ke {filename}")
+            else:
+                messagebox.showwarning("Peringatan", "Gagal mengekspor data. Pastikan openpyxl telah diinstal.")
+        except Exception as e:
+            messagebox.showerror("Error", f"Gagal mengekspor data: {str(e)}")
     
     def refresh_data(self):
         # Dapatkan data transaksi

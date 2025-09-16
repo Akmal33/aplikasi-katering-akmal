@@ -177,49 +177,171 @@ def get_day_name(date_str):
 
 def migrate_from_excel():
     """Migrasi data dari file Excel yang ada (jika ada)"""
-    import openpyxl
-    
-    excel_files = [
-        'catering_finance_console.xlsx',
-        'catering_finance_web.xlsx',
-        'catering_finance_pwa.xlsx'
-    ]
-    
-    for excel_file in excel_files:
-        if os.path.exists(excel_file):
-            try:
-                workbook = openpyxl.load_workbook(excel_file)
-                worksheet = workbook["Keuangan_Katering"] if "Keuangan_Katering" in workbook.sheetnames else workbook.active
-                
-                # Migrasi transaksi dari Excel ke database
-                for row in range(2, worksheet.max_row + 1):
-                    date = worksheet.cell(row=row, column=1).value or ""
-                    day = worksheet.cell(row=row, column=2).value or ""
-                    description = worksheet.cell(row=row, column=3).value or ""
-                    income = worksheet.cell(row=row, column=4).value or 0
-                    expense = worksheet.cell(row=row, column=5).value or 0
-                    balance = worksheet.cell(row=row, column=6).value or 0
+    try:
+        import openpyxl
+        
+        excel_files = [
+            'catering_finance_console.xlsx',
+            'catering_finance_web.xlsx',
+            'catering_finance_pwa.xlsx'
+        ]
+        
+        for excel_file in excel_files:
+            if os.path.exists(excel_file):
+                try:
+                    workbook = openpyxl.load_workbook(excel_file)
+                    worksheet = workbook["Keuangan_Katering"] if "Keuangan_Katering" in workbook.sheetnames else workbook.active
                     
-                    # Cek apakah transaksi sudah ada
-                    conn = sqlite3.connect(DB_FILE)
-                    cursor = conn.cursor()
-                    cursor.execute('''
-                        SELECT COUNT(*) FROM transactions 
-                        WHERE date = ? AND description = ? AND income = ? AND expense = ?
-                    ''', (date, description, income, expense))
-                    
-                    if cursor.fetchone()[0] == 0:
-                        # Tambahkan transaksi jika belum ada
+                    # Migrasi transaksi dari Excel ke database
+                    for row in range(2, worksheet.max_row + 1):
+                        date = worksheet.cell(row=row, column=1).value or ""
+                        day = worksheet.cell(row=row, column=2).value or ""
+                        description = worksheet.cell(row=row, column=3).value or ""
+                        income = worksheet.cell(row=row, column=4).value or 0
+                        expense = worksheet.cell(row=row, column=5).value or 0
+                        balance = worksheet.cell(row=row, column=6).value or 0
+                        
+                        # Cek apakah transaksi sudah ada
+                        conn = sqlite3.connect(DB_FILE)
+                        cursor = conn.cursor()
                         cursor.execute('''
-                            INSERT INTO transactions (date, day, description, income, expense, balance)
-                            VALUES (?, ?, ?, ?, ?, ?)
-                        ''', (date, day, description, income, expense, balance))
-                        conn.commit()
-                    conn.close()
-                
-                print(f"Data migrated from {excel_file}")
-            except Exception as e:
-                print(f"Error migrating data from {excel_file}: {e}")
+                            SELECT COUNT(*) FROM transactions 
+                            WHERE date = ? AND description = ? AND income = ? AND expense = ?
+                        ''', (date, description, income, expense))
+                        
+                        if cursor.fetchone()[0] == 0:
+                            # Tambahkan transaksi jika belum ada
+                            cursor.execute('''
+                                INSERT INTO transactions (date, day, description, income, expense, balance)
+                                VALUES (?, ?, ?, ?, ?, ?)
+                            ''', (date, day, description, income, expense, balance))
+                            conn.commit()
+                        conn.close()
+                    
+                    print(f"Data migrated from {excel_file}")
+                except Exception as e:
+                    print(f"Error migrating data from {excel_file}: {e}")
+    except ImportError:
+        print("openpyxl not installed. Skipping Excel migration.")
+
+def export_to_excel():
+    """Ekspor data dari database ke file Excel"""
+    try:
+        import openpyxl
+        from openpyxl import Workbook
+        
+        # Dapatkan data dari database
+        transactions = get_all_transactions()
+        summary = get_finance_summary()
+        
+        # Buat workbook baru
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Keuangan_Katering"
+        
+        # Tambahkan header
+        headers = ["Tanggal", "Hari", "Deskripsi", "Pemasukan (Rp)", "Pengeluaran (Rp)", "Saldo (Rp)"]
+        for col, header in enumerate(headers, 1):
+            ws.cell(row=1, column=col, value=header)
+        
+        # Tambahkan data transaksi
+        for row, transaction in enumerate(transactions, 2):
+            ws.cell(row=row, column=1, value=transaction['date'])
+            ws.cell(row=row, column=2, value=transaction['day'])
+            ws.cell(row=row, column=3, value=transaction['description'])
+            ws.cell(row=row, column=4, value=transaction['income'])
+            ws.cell(row=row, column=5, value=transaction['expense'])
+            ws.cell(row=row, column=6, value=transaction['balance'])
+        
+        # Simpan file
+        filename = f"catering_finance_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+        wb.save(filename)
+        print(f"Data exported to {filename}")
+        return filename
+    except ImportError:
+        print("openpyxl not installed. Please install it to export to Excel.")
+        return None
+
+def delete_transaction(transaction_id):
+    """Menghapus transaksi berdasarkan ID"""
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    
+    # Dapatkan detail transaksi sebelum dihapus
+    cursor.execute('SELECT income, expense FROM transactions WHERE id = ?', (transaction_id,))
+    result = cursor.fetchone()
+    
+    if result:
+        income, expense = result
+        
+        # Hapus transaksi
+        cursor.execute('DELETE FROM transactions WHERE id = ?', (transaction_id,))
+        
+        # Perbarui ringkasan keuangan
+        cursor.execute('''
+            UPDATE finance_summary 
+            SET total_income = total_income - ?, 
+                total_expense = total_expense - ?,
+                last_updated = CURRENT_TIMESTAMP
+            WHERE id = 1
+        ''', (income, expense))
+        
+        conn.commit()
+        conn.close()
+        
+        # Hitung ulang saldo
+        recalculate_balances()
+        return True
+    else:
+        conn.close()
+        return False
+
+def recalculate_balances():
+    """Menghitung ulang saldo untuk semua transaksi"""
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    
+    # Dapatkan semua transaksi yang diurutkan berdasarkan tanggal
+    cursor.execute('''
+        SELECT id, income, expense
+        FROM transactions
+        ORDER BY date, created_at
+    ''')
+    
+    transactions = cursor.fetchall()
+    
+    # Hitung ulang saldo
+    balance = 0
+    for transaction_id, income, expense in transactions:
+        balance = balance + income - expense
+        cursor.execute('''
+            UPDATE transactions
+            SET balance = ?
+            WHERE id = ?
+        ''', (balance, transaction_id))
+    
+    # Perbarui ringkasan keuangan
+    cursor.execute('''
+        SELECT SUM(income), SUM(expense)
+        FROM transactions
+    ''')
+    
+    result = cursor.fetchone()
+    total_income = result[0] or 0
+    total_expense = result[1] or 0
+    current_balance = total_income - total_expense
+    
+    cursor.execute('''
+        UPDATE finance_summary
+        SET total_income = ?,
+            total_expense = ?,
+            current_balance = ?,
+            last_updated = CURRENT_TIMESTAMP
+        WHERE id = 1
+    ''', (total_income, total_expense, current_balance))
+    
+    conn.commit()
+    conn.close()
 
 # Inisialisasi database saat modul diimpor
 init_database()

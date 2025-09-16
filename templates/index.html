@@ -78,7 +78,7 @@
             </div>
         </div>
 
-        <!-- Ringkasan Keuangan -->
+        <!-- Ringkasan Keuangan dan Ekspor -->
         <div class="summary-cards">
             <div class="summary-card">
                 <h3>Total Pemasukan</h3>
@@ -91,6 +91,13 @@
             <div class="summary-card">
                 <h3>Sisa Uang</h3>
                 <div class="amount balance">Rp {{ "{:,.0f}".format(current_balance) }}</div>
+            </div>
+        </div>
+
+        <!-- Tombol Ekspor -->
+        <div class="card">
+            <div class="card-body">
+                <button class="btn btn-info btn-block" onclick="exportToExcel()">Ekspor ke Excel</button>
             </div>
         </div>
 
@@ -154,5 +161,36 @@
 
     <!-- JavaScript -->
     <script src="/static/js/app.js"></script>
+    
+    <!-- Script untuk ekspor Excel -->
+    <script>
+        function exportToExcel() {
+            showLoading(true);
+            fetch('/export_excel')
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error('Gagal mengekspor data');
+                    }
+                })
+                .then(blob => {
+                    showLoading(false);
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'catering_finance_export.xlsx';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                    showToast('Data berhasil diekspor ke Excel!', 'success');
+                })
+                .catch(error => {
+                    showLoading(false);
+                    showToast('Gagal mengekspor data: ' + error.message, 'error');
+                });
+        }
+    </script>
 </body>
 </html>
