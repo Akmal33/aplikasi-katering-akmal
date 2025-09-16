@@ -29,8 +29,18 @@ def dated_url_for(endpoint, **values):
 @app.route('/')
 def index():
     """Halaman utama"""
-    transactions = get_all_transactions()
-    summary = get_finance_summary()
+    try:
+        transactions = get_all_transactions()
+        summary = get_finance_summary()
+    except Exception as e:
+        # If there's an error with the database, show empty data
+        print(f"Database error: {e}")
+        transactions = []
+        summary = {
+            'total_income': 0,
+            'total_expense': 0,
+            'current_balance': 0
+        }
     
     return render_template('index.html', 
                          transactions=transactions,

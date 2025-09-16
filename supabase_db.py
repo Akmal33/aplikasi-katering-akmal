@@ -24,105 +24,144 @@ def get_supabase_client() -> Client:
     return create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def init_database():
-    """Initialize database - tables should be created in Supabase dashboard"""
-    # In Supabase, tables are typically created through the dashboard or migrations
-    # This function is kept for API compatibility but doesn't need to do anything
-    print("Supabase database initialized successfully!")
+    """Initialize database and create tables if they don't exist"""
+    try:
+        supabase = get_supabase_client()
+        
+        # Try to access the finance_summary table
+        try:
+            result = supabase.table("finance_summary").select("id").eq("id", 1).execute()
+            if not result.data:
+                print("Note: Please create the required tables in your Supabase database.")
+                print("Refer to SUPABASE_SETUP.md for instructions on setting up the database tables.")
+                print("You can also use the SQL commands in supabase_schema.sql file.")
+        except Exception as e:
+            print("Note: Please create the required tables in your Supabase database.")
+            print("Refer to SUPABASE_SETUP.md for instructions on setting up the database tables.")
+            print("You can also use the SQL commands in supabase_schema.sql file.")
+        
+        print("Supabase database initialized successfully!")
+        print("Make sure you have created the required tables as per SUPABASE_SETUP.md")
+    except Exception as e:
+        print(f"Error initializing Supabase database: {e}")
+        raise
 
 def add_income(date: str, day: str, description: str, amount: float) -> float:
     """Add income transaction to Supabase database"""
-    supabase = get_supabase_client()
-    
-    # Get current balance
-    result = supabase.table("finance_summary").select("current_balance").eq("id", 1).execute()
-    previous_balance = result.data[0]["current_balance"] if result.data else 0
-    
-    # Calculate new balance
-    new_balance = previous_balance + amount
-    
-    # Insert transaction
-    transaction_data = {
-        "date": date,
-        "day": day,
-        "description": description,
-        "income": amount,
-        "expense": 0,
-        "balance": new_balance
-    }
-    
-    supabase.table("transactions").insert(transaction_data).execute()
-    
-    # Update finance summary
-    supabase.table("finance_summary").update({
-        "total_income": previous_balance + amount if previous_balance else amount,
-        "current_balance": new_balance
-    }).eq("id", 1).execute()
-    
-    return new_balance
+    try:
+        supabase = get_supabase_client()
+        
+        # Get current balance
+        result = supabase.table("finance_summary").select("current_balance").eq("id", 1).execute()
+        previous_balance = result.data[0]["current_balance"] if result.data else 0
+        
+        # Calculate new balance
+        new_balance = previous_balance + amount
+        
+        # Insert transaction
+        transaction_data = {
+            "date": date,
+            "day": day,
+            "description": description,
+            "income": amount,
+            "expense": 0,
+            "balance": new_balance
+        }
+        
+        supabase.table("transactions").insert(transaction_data).execute()
+        
+        # Update finance summary
+        supabase.table("finance_summary").update({
+            "total_income": previous_balance + amount if previous_balance else amount,
+            "current_balance": new_balance
+        }).eq("id", 1).execute()
+        
+        return new_balance
+    except Exception as e:
+        print(f"Error adding income: {e}")
+        raise
 
 def add_expense(date: str, day: str, description: str, amount: float) -> float:
     """Add expense transaction to Supabase database"""
-    supabase = get_supabase_client()
-    
-    # Get current balance
-    result = supabase.table("finance_summary").select("current_balance").eq("id", 1).execute()
-    previous_balance = result.data[0]["current_balance"] if result.data else 0
-    
-    # Calculate new balance
-    new_balance = previous_balance - amount
-    
-    # Insert transaction
-    transaction_data = {
-        "date": date,
-        "day": day,
-        "description": description,
-        "income": 0,
-        "expense": amount,
-        "balance": new_balance
-    }
-    
-    supabase.table("transactions").insert(transaction_data).execute()
-    
-    # Update finance summary
-    supabase.table("finance_summary").update({
-        "total_expense": previous_balance + amount if previous_balance else amount,
-        "current_balance": new_balance
-    }).eq("id", 1).execute()
-    
-    return new_balance
+    try:
+        supabase = get_supabase_client()
+        
+        # Get current balance
+        result = supabase.table("finance_summary").select("current_balance").eq("id", 1).execute()
+        previous_balance = result.data[0]["current_balance"] if result.data else 0
+        
+        # Calculate new balance
+        new_balance = previous_balance - amount
+        
+        # Insert transaction
+        transaction_data = {
+            "date": date,
+            "day": day,
+            "description": description,
+            "income": 0,
+            "expense": amount,
+            "balance": new_balance
+        }
+        
+        supabase.table("transactions").insert(transaction_data).execute()
+        
+        # Update finance summary
+        supabase.table("finance_summary").update({
+            "total_expense": previous_balance + amount if previous_balance else amount,
+            "current_balance": new_balance
+        }).eq("id", 1).execute()
+        
+        return new_balance
+    except Exception as e:
+        print(f"Error adding expense: {e}")
+        raise
 
 def get_all_transactions() -> List[Dict]:
     """Get all transactions from Supabase database"""
-    supabase = get_supabase_client()
-    
-    result = supabase.table("transactions").select("*").order("date", desc=False).execute()
-    
-    transactions = []
-    for transaction in result.data:
-        transactions.append({
-            'date': transaction['date'],
-            'day': transaction['day'],
-            'description': transaction['description'],
-            'income': transaction['income'],
-            'expense': transaction['expense'],
-            'balance': transaction['balance']
-        })
-    
-    return transactions
+    try:
+        supabase = get_supabase_client()
+        
+        result = supabase.table("transactions").select("*").order("date", desc=False).execute()
+        
+        transactions = []
+        for transaction in result.data:
+            transactions.append({
+                'date': transaction['date'],
+                'day': transaction['day'],
+                'description': transaction['description'],
+                'income': transaction['income'],
+                'expense': transaction['expense'],
+                'balance': transaction['balance']
+            })
+        
+        return transactions
+    except Exception as e:
+        print(f"Error getting transactions: {e}")
+        # Return empty list if table doesn't exist yet
+        return []
 
 def get_finance_summary() -> Dict:
     """Get finance summary from Supabase database"""
-    supabase = get_supabase_client()
-    
-    result = supabase.table("finance_summary").select("*").eq("id", 1).execute()
-    
-    if result.data:
-        return {
-            'total_income': result.data[0]['total_income'],
-            'total_expense': result.data[0]['total_expense'],
-            'current_balance': result.data[0]['current_balance']
-        }
-    else:
+    try:
+        supabase = get_supabase_client()
+        
+        result = supabase.table("finance_summary").select("*").eq("id", 1).execute()
+        
+        if result.data:
+            return {
+                'total_income': result.data[0]['total_income'],
+                'total_expense': result.data[0]['total_expense'],
+                'current_balance': result.data[0]['current_balance']
+            }
+        else:
+            return {
+                'total_income': 0,
+                'total_expense': 0,
+                'current_balance': 0
+            }
+    except Exception as e:
+        print(f"Error getting finance summary: {e}")
+        # Return default values if table doesn't exist yet
         return {
             'total_income': 0,
             'total_expense': 0,
