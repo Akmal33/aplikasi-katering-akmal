@@ -68,6 +68,16 @@ The application will be available at `http://localhost:5000`.
 3. View your transaction history in the table
 4. Export your data to Excel using the "Export to Excel" button
 
+## Deployment
+
+### Deploy to Render.com
+
+See [RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md) for detailed instructions on deploying to Render.com.
+
+### Other Platforms
+
+For deployment instructions to other platforms, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ## Troubleshooting
 
 ### RLS (Row Level Security) Errors
@@ -79,7 +89,3 @@ If you encounter RLS errors, make sure you're using the Service Role Key in your
 1. Verify your Supabase URL and key in the `.env` file
 2. Ensure you've run the SQL schema to create the tables
 3. Check that you're using the correct service role key
-
-## Deployment
-
-For deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).

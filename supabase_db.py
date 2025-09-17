@@ -12,8 +12,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Supabase configuration
-SUPABASE_URL = os.environ.get("https://zuanrdxhdpwxpdjcurad.supabase.co", "")
-SUPABASE_KEY = os.environ.get("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YW5yZHhoZHB3eHBkamN1cmFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5OTkzOTUsImV4cCI6MjA3MzU3NTM5NX0.iW3CBNkFRsH52QEYIA0f5B3fdtgc1l9MqiEyl4qkQ7o", "")
+SUPABASE_URL = "https://zuanrdxhdpwxpdjcurad.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YW5yZHhoZHB3eHBkamN1cmFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5OTkzOTUsImV4cCI6MjA3MzU3NTM5NX0.iW3CBNkFRsH52QEYIA0f5B3fdtgc1l9MqiEyl4qkQ7o"
 
 # Validate Supabase configuration
 if not SUPABASE_URL or not SUPABASE_KEY or SUPABASE_URL == "your_supabase_project_url_here" or SUPABASE_KEY == "your_supabase_service_role_key_here":
