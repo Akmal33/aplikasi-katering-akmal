@@ -2,9 +2,9 @@ from flask import Flask, render_template, request, jsonify, send_file, url_for
 import os
 from datetime import datetime
 # Use Supabase database instead of SQLite
-from supabase_db import init_database, add_income, add_expense, get_all_transactions, get_finance_summary, get_day_name
-# Keep SQLite for export functionality
-from database import export_to_excel
+from supabase_db import init_database, add_income, add_expense, get_all_transactions, get_finance_summary, get_day_name, export_to_excel
+# Keep SQLite for other functionality
+from database import export_to_excel as sqlite_export_to_excel
 
 app = Flask(__name__, static_url_path='/static')
 

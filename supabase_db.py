@@ -12,8 +12,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Supabase configuration
-SUPABASE_URL = "https://zuanrdxhdpwxpdjcurad.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp1YW5yZHhoZHB3eHBkamN1cmFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc5OTkzOTUsImV4cCI6MjA3MzU3NTM5NX0.iW3CBNkFRsH52QEYIA0f5B3fdtgc1l9MqiEyl4qkQ7o"
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
 
 # Validate Supabase configuration
 if not SUPABASE_URL or not SUPABASE_KEY or SUPABASE_URL == "your_supabase_project_url_here" or SUPABASE_KEY == "your_supabase_service_role_key_here":
@@ -184,9 +184,47 @@ def get_day_name(date_str: str) -> str:
     except ValueError:
         return "Tidak valid"
 
+def export_to_excel():
+    """Export data from Supabase database to Excel file"""
+    try:
+        import openpyxl
+        from openpyxl import Workbook
+        from datetime import datetime
+        
+        # Get data from Supabase database
+        transactions = get_all_transactions()
+        summary = get_finance_summary()
+        
+        # Create workbook
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Keuangan_Katering"
+        
+        # Add headers
+        headers = ["Tanggal", "Hari", "Deskripsi", "Pemasukan (Rp)", "Pengeluaran (Rp)", "Saldo (Rp)"]
+        for col, header in enumerate(headers, 1):
+            ws.cell(row=1, column=col, value=header)
+        
+        # Add transaction data
+        for row, transaction in enumerate(transactions, 2):
+            ws.cell(row=row, column=1, value=transaction['date'])
+            ws.cell(row=row, column=2, value=transaction['day'])
+            ws.cell(row=row, column=3, value=transaction['description'])
+            ws.cell(row=row, column=4, value=transaction['income'])
+            ws.cell(row=row, column=5, value=transaction['expense'])
+            ws.cell(row=row, column=6, value=transaction['balance'])
+        
+        # Save file
+        filename = f"catering_finance_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+        wb.save(filename)
+        print(f"Data exported to {filename}")
+        return filename
+    except ImportError:
+        print("openpyxl not installed. Please install it to export to Excel.")
+        return None
+
 # The following functions would need to be adapted for Supabase:
 # - migrate_from_excel (would need to insert data via Supabase)
-# - export_to_excel (can still work as it reads from database)
 # - delete_transaction (would need to be adapted for Supabase)
 # - recalculate_balances (would need to be adapted for Supabase)
 
